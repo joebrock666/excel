@@ -1,1 +1,1 @@
-Pure JavaScript project.
+Pure JavaScript project

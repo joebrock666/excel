@@ -1,13 +1,14 @@
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-const HTMLWebpackPlugin = require('html-webpack-plugin')
-const CopyPlugin = require("copy-webpack-plugin")
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path')
+const {CleanWebpackPlugin} = require('clean-webpack-plugin')
+const HTMLWebpackPlugin = require('html-webpack-plugin')
+const CopyPlugin = require('copy-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 const isProd = process.env.NODE_ENV === 'production'
 const isDev = !isProd
 
-const filename = ext => isDev ? `bundle.${ext}` : `bundle.${ext}`
+const filename = ext => isDev ? `bundle.${ext}` : `bundle.[hash].${ext}`
+
 const jsLoaders = () => {
   const loaders = [
     {
@@ -55,10 +56,10 @@ module.exports = {
       }
     }),
     new CopyPlugin([
-      { 
-        from: path.resolve(__dirname, 'src/favicon.ico'), 
+      {
+        from: path.resolve(__dirname, 'src/favicon.ico'),
         to: path.resolve(__dirname, 'dist')
-      },
+      }
     ]),
     new MiniCssExtractPlugin({
       filename: filename('css')
@@ -67,28 +68,24 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.css$/i,
-        use: ["style-loader", "css-loader"],
-      },
-      {
         test: /\.s[ac]ss$/i,
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              hmr: isDev,
+              hmr: true,
               reloadAll: true
             }
           },
-          "css-loader",
-          "sass-loader",
+          'css-loader',
+          'sass-loader'
         ],
       },
       {
-        test: /\.m?js$/,
+        test: /\.js$/,
         exclude: /node_modules/,
-        use: jsLoaders(),
+        use: jsLoaders()
       }
-    ],
-  },
+    ]
+  }
 }
